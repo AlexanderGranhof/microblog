@@ -17,8 +17,8 @@ jobs:
       - python/save-cache
       
       - run:
-          command: make test-unit
-          name: Run unit tests
+          command: make test
+          name: Run tests
 
 workflows:
   main:
