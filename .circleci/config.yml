@@ -11,7 +11,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - m2-{{ checksum: "requirements/dev.txt" }}
+            - m2-{{ checksum "requirements/dev.txt" }}
             - m2- # used if checksum fails
 
       - run:
@@ -22,7 +22,7 @@ jobs:
             make install-dev
 
       - save_cache:
-          key: m2-{{ checksum: "requirements/dev.txt" }}
+          key: m2-{{ checksum "requirements/dev.txt" }}
           paths:
             - venv
       - run:
