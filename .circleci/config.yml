@@ -11,6 +11,9 @@ jobs:
       - python/load-cache
       - python/install-deps
       - run:
+          command: source venv/bin/activate
+          name: Activate venv
+      - run:
           command: make install-dev
           name: Install dev dependencies
 
