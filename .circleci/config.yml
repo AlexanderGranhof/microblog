@@ -8,10 +8,10 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install dev dependencies
-        command: |
-          . venv/bin/activate
-          make install-dev
+          name: Install dev dependencies
+          command: |
+            . venv/bin/activate
+            make install-dev
       - run:
           name: run tests
           command: |
