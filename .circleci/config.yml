@@ -10,10 +10,12 @@ jobs:
       - checkout
       - python/load-cache
       - python/install-deps
-      - python/save-cache
       - run:
           command: make install-dev
           name: Install dev dependencies
+
+      - python/save-cache
+      
       - run:
           command: make test-unit
           name: Run unit tests
