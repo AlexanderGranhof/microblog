@@ -12,12 +12,6 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: apt-get install python3-venv python3-dev
-          name: Install python venv
-      - run:
-          command: python3 -m venv venv && . venv/bin/activate
-          name: Start venv
-      - run:
           command: make install-dev
           name: Install dev dependencies
       - run:
