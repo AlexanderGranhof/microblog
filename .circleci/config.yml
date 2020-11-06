@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Install dev dependencies
           command: |
+            python3 -m venv venv
             . venv/bin/activate
             make install-dev
       - run:
