@@ -31,8 +31,9 @@ jobs:
             . venv/bin/activate
             make test
   deploy:
-    machine:
-      enabled: true
+    docker:
+      - image: circleci/python:3.7
+      
     working_directory: ~/deploy
     
     steps:
