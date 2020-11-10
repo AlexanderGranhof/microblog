@@ -49,12 +49,12 @@ jobs:
       - run:
           name: Copy code to azure server
           command: |
-            scp -o StrictHostKeyChecking=no -r ~/deploy/* $SSH_USER@$SSH_HOST:/$DEPLOY_PROJECT_PATH
+            tar czv ~/deploy | ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'cat | tar xz -C $DEPLOY_PROJECT_PATH'
       
       - run:
           name: Deploy to azure via SSH
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "./deploy_microblog.sh"
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "supervisorctl restart microblog"
 workflows:
   # test_app:
   #   jobs:
