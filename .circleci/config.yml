@@ -30,8 +30,23 @@ jobs:
           command: |
             . venv/bin/activate
             make test
-
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - run:
+          name: Deploy to azure via SSH
+          command: |
+            ssh ssh $SSH_USER@$SSH_HOST "echo \"testing from cli \" >> test.txt"
 workflows:
   main:
     jobs:
       - build
+  deploy_azure:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
+                - circleci-project-setup
