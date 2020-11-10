@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/python:3.7
 
@@ -37,12 +37,12 @@ jobs:
       - run:
           name: Deploy to azure via SSH
           command: |
-            ssh ssh $SSH_USER@$SSH_HOST "echo \"testing from cli \" >> test.txt"
+            ssh $SSH_USER@$SSH_HOST "echo \"testing from cli \" >> test.txt"
 workflows:
-  main:
-    jobs:
-      - build
-  deploy_azure:
+  # test_app:
+  #   jobs:
+  #     - test
+  deploy_to_azure:
     jobs:
       - deploy:
           filters:
