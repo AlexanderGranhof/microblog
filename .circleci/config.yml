@@ -33,7 +33,7 @@ jobs:
   deploy:
     docker:
       - image: circleci/python:3.7
-      
+
     working_directory: ~/deploy
     
     steps:
@@ -44,17 +44,17 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            make install
+            make install  
       
       - run:
           name: Copy code to azure server
           command: |
-            scp -r ~/deploy/* $SSH_USER@$SSH_HOST:/$DEPLOY_PROJECT_PATH
+            scp -o StrictHostKeyChecking=no -r ~/deploy/* $SSH_USER@$SSH_HOST:/$DEPLOY_PROJECT_PATH
       
       - run:
           name: Deploy to azure via SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST "./deploy_microblog.sh"
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "./deploy_microblog.sh"
 workflows:
   # test_app:
   #   jobs:
