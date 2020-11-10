@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: circleci/python:3.7
 
-    working_directory: ~/repo
+    working_directory: ~/test
 
     steps:
       - checkout
@@ -33,11 +33,27 @@ jobs:
   deploy:
     machine:
       enabled: true
+    working_directory: ~/deploy
+    
     steps:
+      - checkout
+      
+      - run:
+          name: Install dev dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make install
+      
+      - run:
+          name: Copy code to azure server
+          command: |
+            scp -r ~/deploy/* $SSH_USER@$SSH_HOST:/$DEPLOY_PROJECT_PATH
+      
       - run:
           name: Deploy to azure via SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST "echo \"testing from cli \" >> test.txt"
+            ssh $SSH_USER@$SSH_HOST "./deploy_microblog.sh"
 workflows:
   # test_app:
   #   jobs:
