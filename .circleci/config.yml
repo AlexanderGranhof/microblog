@@ -50,7 +50,7 @@ jobs:
           name: Copy code to azure server
           command: |
             tar -zcvf ../deploy.tar.gz .
-            cat ../deploy.tar.gz | ssh $SSH_USER@$SSH_HOST "cat - | tar xvz --no-overwrite-dir -C $DEPLOY_PROJECT_PATH"
+            cat ../deploy.tar.gz | ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cat - | tar xvz --no-overwrite-dir -C $DEPLOY_PROJECT_PATH"
       
       - run:
           name: Deploy to azure via SSH
