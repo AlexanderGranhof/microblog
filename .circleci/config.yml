@@ -26,7 +26,7 @@ jobs:
           command: |
             . venv/bin/activate
             make test
-            deploy_to_azure:
+  deploy_to_azure:
     docker:
       - image: circleci/python:3.7
     working_directory: ~/deploy
