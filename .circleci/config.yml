@@ -47,7 +47,12 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
-      - setup_remote_docker
+      # - setup_remote_docker
+      - checkout
+      - run:
+          name: Create Docker Image
+          command: |
+            docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile.prod .
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
