@@ -44,9 +44,5 @@ services:
     test-circleci:
         build:
             context: .
-            dockerfile: ./docker/Dockerfile.test
+            dockerfile: ./docker/Dockerfile.test.circleci
         tty: true
-        volumes_from: 
-            - circleci_test-volume
-        ports:
-            - 5000:5000
