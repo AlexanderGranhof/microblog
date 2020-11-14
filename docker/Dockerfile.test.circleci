@@ -4,9 +4,10 @@ WORKDIR /microblog
 
 # COPY . .
 COPY app app
+COPY tests tests
 COPY migrations migrations
 COPY requirements requirements
-COPY requirements.txt microblog.py ./
+COPY requirements.txt microblog.py pytests.ini .coveragerc ./
 COPY test.sh .
 
 RUN python -m venv .venv
