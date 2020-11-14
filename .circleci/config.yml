@@ -6,6 +6,7 @@ jobs:
       - image: circleci/python:3.7
     working_directory: ~/test
     steps:
+      - setup_remote_docker
       - checkout
       - restore_cache:
           keys:
@@ -22,10 +23,8 @@ jobs:
           paths:
             - venv
       - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            make test
+          name: Run tests
+          command: docker-compose up test-circleci
   deploy_to_azure:
     docker:
       - image: circleci/python:3.7
@@ -41,6 +40,21 @@ jobs:
           name: Deploy to azure via SSH
           command: |
             ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "supervisorctl restart microblog"
+  deploy_to_docker_hub:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Create Docker Image
+          command: |
+            docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile.prod .
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $DOCKERHUB_USERNAME/microblog:latest
 workflows:
   test:
     jobs:
@@ -53,3 +67,11 @@ workflows:
               only:
                 - master
                 - circleci-project-setup
+      - deploy_to_docker_hub:
+        filters:
+          branches:
+            only:
+              - master
+              - circleci-project-setup
+              - docker
+        

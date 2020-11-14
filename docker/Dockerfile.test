@@ -1,0 +1,8 @@
+FROM python:3.8
+
+WORKDIR /microblog
+
+COPY test.sh .
+RUN chmod +x test.sh
+
+ENTRYPOINT ["./test.sh"]
