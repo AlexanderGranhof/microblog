@@ -40,8 +40,13 @@ services:
             - .:/microblog
         ports:
             - 5000:5000
-        links:
-            - database:database
-        environment:
-            - MYSQL_HOST=database
-            - DATABASE_URL=mysql+pymysql://microblog:microblog@database:3306/microblog
+    
+    test-circleci:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.test
+        tty: true
+        volumes_from: 
+            - circleci_test-volume
+        ports:
+            - 5000:5000

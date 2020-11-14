@@ -23,10 +23,11 @@ jobs:
           paths:
             - venv
       - run:
+          name: Copy data into volume #circleci does not allow volumes
+          command: docker cp . circleci_test-volume:/microblog
+      - run:
           name: Run tests
-          command: |
-            ls -a
-            make test
+          command: docker-compose up test-circleci
   deploy_to_azure:
     docker:
       - image: circleci/python:3.7
