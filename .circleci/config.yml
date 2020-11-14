@@ -23,9 +23,7 @@ jobs:
             - venv
       - run:
           name: run tests
-          command: |
-            . venv/bin/activate
-            make test
+          command: make test
   deploy_to_azure:
     docker:
       - image: circleci/python:3.7
