@@ -19,3 +19,29 @@ services:
             - MYSQL_ROOT_PASSWORD=microblog
         ports: 
             - 3306:3306
+
+    prod:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.prod
+        ports:
+            - 5000:5000
+        links:
+            - database:database
+        environment:
+            - MYSQL_HOST=database
+            - DATABASE_URL=mysql+pymysql://microblog:microblog@database:3306/microblog
+    test:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.test
+        tty: true
+        volumes: 
+            - .:/microblog
+        ports:
+            - 5000:5000
+        links:
+            - database:database
+        environment:
+            - MYSQL_HOST=database
+            - DATABASE_URL=mysql+pymysql://microblog:microblog@database:3306/microblog
