@@ -23,8 +23,10 @@ jobs:
           paths:
             - venv
       - run:
-          name: run tests
-          command: make test
+          name: Run tests
+          command: |
+            ls -a
+            make test
   deploy_to_azure:
     docker:
       - image: circleci/python:3.7
