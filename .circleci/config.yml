@@ -25,9 +25,6 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose up test-circleci
-      - run:
-          name: Run tests
-          command: docker-compose up test-circleci
   deploy_to_azure:
     docker:
       - image: circleci/python:3.7
