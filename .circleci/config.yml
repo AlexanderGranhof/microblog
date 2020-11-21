@@ -55,6 +55,27 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $DOCKERHUB_USERNAME/microblog:latest
+  ansible_deploy_to_azure:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "requirements/dev.txt" }}
+            - m2- # used if checksum fails
+      - run:
+          name: Install deploy dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make install-deploy
+      - run:
+          name: Install dev dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            ansible-playbook ansible/provision_instances.yml
 workflows:
   test:
     jobs:
@@ -74,4 +95,11 @@ workflows:
               - master
               - circleci-project-setup
               - docker
+      - ansible_deploy_to_azure:
+        filters:
+          branches:
+            only:
+              - master
+              - circleci-project-setup
+              - ansible
         
