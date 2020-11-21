@@ -71,11 +71,12 @@ jobs:
             . venv/bin/activate
             make install-deploy
       - run:
-          name: Install dev dependencies
+          name: Ansible-playbook deploy
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            ansible-playbook ansible/provision_instances.yml
+            cd ansible
+            ansible-playbook provision_instances.yml
 workflows:
   test:
     jobs:
