@@ -1,0 +1,54 @@
+---
+# Variable setup.
+- name: Include OS-specific variables.
+  include_vars: "debian.yml"
+
+- name: Define nginx_user.
+  set_fact:
+    nginx_user: "{{ __nginx_user }}"
+  when: nginx_user is not defined
+
+- name: Update apt cache.
+  apt: update_cache=yes cache_valid_time=86400
+  changed_when: false
+
+- name: Ensure nginx is installed.
+  apt:
+    name: "{{ nginx_package_name }}"
+    state: present
+    default_release: "{{ nginx_default_release }}"
+
+# Vhost configuration.
+- import_tasks: vhosts.yml
+
+# Nginx setup.
+# - name: Copy nginx configuration in place.
+#   template:
+#     src: "{{ nginx_conf_template }}"
+#     dest: "{{ nginx_conf_file_path }}"
+#     owner: root
+#     group: "{{ root_group }}"
+#     mode: 0644
+#   notify:
+#     - reload nginx
+
+- name: Copy nginx balancer config
+  template:
+    src: files/loadBalancer.conf.j2
+    dest: /etc/nginx/sites-enabled/loadBalancer.conf
+
+- name: Copy nginx main balancer config
+  template:
+    src: files/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+
+- name: Remove default config
+  file:
+    state: absent
+    path: /etc/nginx/sites-enabled/default
+
+- name: Ensure nginx service is running as configured.
+  service:
+    name: nginx
+    state: "{{ nginx_service_state }}"
+    enabled: "{{ nginx_service_enabled }}"
