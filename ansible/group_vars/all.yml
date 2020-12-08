@@ -10,4 +10,4 @@ vmtags:
     StudentId: "algn18" # Change me
 
 
-pub_ssh_key_location: '~/.ssh/id_rsa' # Change me, your local ssh key!
+pub_ssh_key_location: '~/.ssh/id_rsa.pub' # Change me, your local ssh key!
