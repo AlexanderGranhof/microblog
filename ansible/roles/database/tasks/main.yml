@@ -1,0 +1,13 @@
+---
+- name: Create a database container
+  docker_container:
+    name: database
+    image: mysql:5.7
+    state: started
+    ports:
+    - 3306:3306
+    env:
+      MYSQL_ROOT_PASSWORD: microblog
+      MYSQL_DATABASE: microblog
+      MYSQL_USER: microblog
+      MYSQL_PASSWORD: microblog

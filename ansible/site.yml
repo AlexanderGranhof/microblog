@@ -3,3 +3,6 @@
 -   import_playbook: terminate_instances.yml
 -   import_playbook: provision_instances.yml
 -   import_playbook: gather_vm_instances.yml
+-   import_playbook: loadBalancer.yml
+-   import_playbook: database.yml
+-   import_playbook: appServer.yml

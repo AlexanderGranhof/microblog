@@ -1,0 +1,11 @@
+---
+- name: Start the app container
+  docker_container:
+    name: app
+    image: granhof/microblog:latest
+    state: started
+    ports:
+    - 8000:5000
+    env:
+      MYSQL_HOST: "{{ groups['database'][0] }}"
+      DATABASE_URL: "mysql+pymysql://microblog:microblog@{{ groups['database'][0] }}:3306/microblog"
