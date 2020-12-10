@@ -82,22 +82,22 @@ workflows:
     jobs:
       - test_app
       - deploy_to_docker_hub:
-        requires:
+          requires:
             - test_app
-        filters:
-          branches:
-            only:
-              - master
-              - circleci-project-setup
-              - docker
+          filters:
+            branches:
+              only:
+                - master
+                - circleci-project-setup
+                - docker
       - ansible_deploy_to_azure:
-        requires:
-          - test_app
-          - deploy_to_docker_hub
-        filters:
-          branches:
-            only:
-              - master
-              - circleci-project-setup
-              - ansible
+          requires:
+            - test_app
+            - deploy_to_docker_hub
+          filters:
+            branches:
+              only:
+                - master
+                - circleci-project-setup
+                - ansible
         
