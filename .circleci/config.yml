@@ -76,20 +76,14 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             cd ansible
-            ansible-playbook provision_instances.yml
+            ansible-playbook gather_vm_instances.yml appServer.yml
 workflows:
-  test:
-    jobs:
-      - test_app
   deploy:
     jobs:
-      - deploy_to_azure:
-          filters:
-            branches:
-              only:
-                - master
-                - circleci-project-setup
+      - test_app
       - deploy_to_docker_hub:
+        requires:
+            - test_app
         filters:
           branches:
             only:
@@ -97,6 +91,9 @@ workflows:
               - circleci-project-setup
               - docker
       - ansible_deploy_to_azure:
+        requires:
+          - test_app
+          - deploy_to_docker_hub
         filters:
           branches:
             only:
