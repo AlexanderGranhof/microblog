@@ -52,3 +52,15 @@
     name: nginx
     state: "{{ nginx_service_state }}"
     enabled: "{{ nginx_service_enabled }}"
+
+- name: Start nginx exporter
+  command: |
+    docker run \
+      -d \
+      --restart always \
+      -p 9113:9113 \
+      nginx/nginx-prometheus-exporter:0.4.2 \
+      -nginx.scrape-uri=http://algn18.me/metrics \
+      -nginx.retries=10 \
+      -nginx.ssl-verify=false \
+      -web.telemetry-path=/prometheus

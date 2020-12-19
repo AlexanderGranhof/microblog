@@ -11,3 +11,31 @@
       MYSQL_DATABASE: microblog
       MYSQL_USER: microblog
       MYSQL_PASSWORD: microblog
+
+- name: Copy setup
+  copy:
+      src: files/setup.sql
+      dest: setup.sql
+
+-  name: Access MySQL container
+   become: yes
+   shell: docker exec database mysql -uroot -pmicroblog < setup.sql
+
+- name: Pull mysql exporter
+  become: yes
+  shell: docker pull prom/mysqld-exporter
+
+- name: Start mysql exporter
+  command: |
+    docker run -d \
+      -p 9104:9104 \
+      --network host \
+      -e DATA_SOURCE_NAME="exporter:exporter@(localhost:3306)/" \
+      --restart always \
+      prom/mysqld-exporter:latest \
+      --collect.auto_increment.columns \
+      --collect.binlog_size \
+      --collect.engine_innodb_status \
+      --collect.engine_tokudb_status \
+      --collect.global_status \
+      --collect.info_schema.processlist

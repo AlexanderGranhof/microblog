@@ -1,7 +1,7 @@
 http {
    upstream app-hosts {
       {{ lb_method }};
-      server {{ groups['appServer'][0] }}:8000;
+      server {{ groups['appServer'][0] }}:5000;
    }
 
    access_log /var/log/nginx/access.log;
@@ -17,6 +17,10 @@ http {
       
       location / {
          proxy_pass http://app-hosts;
+      }
+
+      location /metrics {
+         stub_status on;
       }
    }
    #  server {

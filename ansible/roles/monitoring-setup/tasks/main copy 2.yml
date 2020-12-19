@@ -1,0 +1,107 @@
+---
+    # Node exporter installation and setup
+
+    - name: Start by downloading node exporter file
+      get_url:
+          url: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
+          dest: /tmp/
+          mode: '0440'
+
+    - name: Create a node exporter user
+      command: sudo useradd -rs /bin/false node_exporter
+
+    - name: Extract exporter file
+      unarchive:
+          src: /tmp/node_exporter-0.18.1.linux-amd64.tar.gz
+          dest: /tmp/
+          remote_src: yes
+
+    - name: Copy the binary to /usr/local/bin folder with correct user premissions
+      copy:
+          src:  /tmp/node_exporter-0.18.1.linux-amd64/node_exporter
+          dest: /usr/local/bin/
+          remote_src: yes
+          owner: node_exporter
+          group: node_exporter
+          mode: ugo+rwx
+
+    - name: Create and setup node_exporter.service
+      template:
+          src: ./templates/node_exporter.j2
+          dest: /etc/systemd/system/node_exporter.service
+          owner: "{{ root_user }}"
+          group: "{{ root_user }}"
+          mode: '0644'
+
+    - name: Reload daemon
+      command: sudo systemctl daemon-reload
+
+    - name: Start node_exporter after restarting
+      command: sudo systemctl start node_exporter
+
+    - name: Check service status
+      command: sudo systemctl status node_exporter.service
+
+    - name: Enable service for system startup
+      command: sudo systemctl enable node_exporter
+
+    - name: Verify that node exporter is correctly up and running with curl
+      command: curl http://localhost:9100/metrics
+
+    # Prometheus installation and setup
+
+    - name: Start by downloading prometheus file
+      get_url:
+          url: https://github.com/prometheus/prometheus/releases/download/v2.10.0/prometheus-2.10.0.linux-amd64.tar.gz
+          dest: /tmp/
+          mode: '0440'
+
+    - name: Extract prometheus file
+      unarchive:
+          src: /tmp/prometheus-2.10.0.linux-amd64.tar.gz
+          dest: /etc/
+          creates: /etc/prometheus
+          remote_src: yes
+
+    - name: Rename prometheus
+      command: mv /etc/prometheus-2.10.0.linux-amd64 /etc/prometheus
+
+    - name: Modify the prometheus.yml file
+      template:
+        src: ./templates/prometheus_template.j2
+        dest: /etc/prometheus/prometheus.yml
+        owner: "{{ root_user }}"
+        group: "{{ root_user }}"
+        mode: '0644'
+
+    - name: Start prometheus
+      command: sudo ./prometheus &
+
+    - name: Download grafana file
+      get_url:
+        url: https://dl.grafana.com/oss/release/grafana_6.2.4_amd64.deb
+        dest: .
+        mode: '0440'
+
+    - name: Extract the graphana files
+      command: sudo dpkg -i --force-depends grafana_6.2.4_amd64.deb
+
+    - name: Append to grafana.ini
+      lineinfile:
+        path: /etc/grafana/grafana.ini
+        regexp: '^;domain'
+        line: 'domain = wissamsawh.me'
+        state: present
+
+    - name: Append to grafana.ini
+      lineinfile:
+        path: /etc/grafana/grafana.ini
+        regexp: '^;root_url'
+        line: 'root_url = %(protocol)s://%(domain)s/grafana/'
+        state: present
+
+    - name: Reload daemon
+      command: sudo systemctl daemon-reload
+
+    - name: Start grafana after restarting
+      command: sudo systemctl start grafana-server

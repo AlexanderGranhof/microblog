@@ -1,3 +1,9 @@
+http://168.63.61.89:9104/metrics //db exporter
+http://65.52.225.13:9113/prometheus //nginx exporter
+http://168.63.40.235:9100/metrics //node_exporter
+http://40.69.33.164:9102/metrics //gunicorn exporter
+
+sum(http_response_code{status=~"2.."}) / sum(gunicorn_requests) * 100
 Microblog
 ===================
 [![CircleCI](https://circleci.com/gh/AlexanderGranhof/microblog.svg?style=svg)](https://app.circleci.com/pipelines/github/AlexanderGranhof/microblog)

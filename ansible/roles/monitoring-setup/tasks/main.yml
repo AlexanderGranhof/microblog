@@ -1,0 +1,149 @@
+---
+# Node exporter
+
+- name: Download node exporter
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: /home/azureuser/
+    mode: '0440'
+
+- name: Unarchive node exporter
+  unarchive:
+      remote_src: yes
+      src: /home/azureuser/node_exporter-1.0.1.linux-amd64.tar.gz
+      dest: /home/azureuser/
+
+- name: Create a node exporter user
+  become: yes
+  command: useradd -rs /bin/false node_exporter
+  ignore_errors: yes
+
+- name: Copy the binary with permissions
+  copy:
+      remote_src: yes
+      src:  /home/azureuser/node_exporter-1.0.1.linux-amd64/node_exporter
+      dest: /usr/local/bin/
+      owner: node_exporter
+      group: node_exporter
+      mode: ugo+rwx
+
+- name: Create and setup node_exporter.service
+  template:
+      src: ./templates/node_exporter.service.j2
+      dest: /etc/systemd/system/node_exporter.service
+      owner: azureuser
+      group: azureuser
+      mode: '0644'
+
+- name: Reload daemon
+  become: yes
+  command: systemctl daemon-reload
+
+- name: Start node_exporter
+  become: yes
+  command: systemctl start node_exporter
+
+- name: Check service
+  become: yes
+  command: systemctl status node_exporter.service
+
+- name: Enable service for system startup
+  become: yes
+  command: systemctl enable node_exporter
+
+- name: Verify that node exporter is correctly up and running
+  uri:
+    url: http://localhost:9100/metrics
+    method: GET
+    status_code: 200
+
+- name: Remove downloaded and unarchived files for node exporter
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /home/azureuser/node_exporter-1.0.1.linux-amd64.tar.gz
+    - /home/azureuser/node_exporter-1.0.1.linux-amd64
+
+# # Prometheus
+
+- name: Download Prometheus
+  get_url:
+    url: https://github.com/prometheus/prometheus/releases/download/v2.23.0/prometheus-2.23.0.linux-amd64.tar.gz
+    dest: /home/azureuser/
+    mode: '0440'
+
+- name: Create Prometheus etc dir
+  shell: mkdir -p /etc/prometheus
+
+- name: Unarchive Prometheus
+  unarchive:
+      remote_src: yes
+      src: /home/azureuser/prometheus-2.23.0.linux-amd64.tar.gz
+      dest: /home/azureuser
+
+- name: Copy Prometheus to etc
+  copy:
+    remote_src: yes
+    src: /home/azureuser/prometheus-2.23.0.linux-amd64/
+    dest: /etc/prometheus/
+    owner: "{{ root_user }}"
+    group: "{{ root_user }}"
+
+- name: Make prometheus executable
+  file:
+    path: /etc/prometheus/prometheus
+    owner: "{{ root_user }}"
+    group: "{{ root_user }}"
+    mode: ugo+rwx
+
+- name: Modify the prometheus.yml file
+  template:
+    src: templates/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: "{{ root_user }}"
+    group: "{{ root_user }}"
+
+- name: Create prometheus storage directory
+  file:
+    path: /var/lib/prometheus/data/
+    state: directory
+    owner: "{{ root_user }}"
+    group: "{{ root_user }}"
+
+- name: ls prometheus
+  shell: cat /etc/prometheus/prometheus.yml
+  register: awdawawdaddddd
+
+- name: Display all variables/facts known for a host
+  debug:
+      var: awdawawdaddddd.stdout_lines
+
+- name: Create a prometheus service 
+  template:
+    src: templates/prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: "{{ root_user }}"
+    group: "{{ root_user }}"
+
+- name: reload daemon
+  become: yes
+  shell: systemctl daemon-reload
+
+- name: Start service
+  service: name=prometheus state=started enabled=yes
+
+# Grafana
+
+- name: Download Grafana
+  get_url:
+    url: https://dl.grafana.com/oss/release/grafana_6.2.4_amd64.deb
+    dest: /home/azureuser
+    mode: '0440'
+
+- name: Install Grafana using dpkg
+  become: yes
+  command: dpkg -i --force-depends /home/azureuser/grafana_6.2.4_amd64.deb
+
+- name: Start Grafana
+  service: name=grafana-server state=started enabled=yes

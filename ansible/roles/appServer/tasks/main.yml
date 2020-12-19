@@ -4,8 +4,15 @@
     name: app
     image: granhof/microblog:latest
     state: started
-    ports:
-    - 8000:5000
+    network_mode: host
     env:
       MYSQL_HOST: "{{ groups['database'][0] }}"
       DATABASE_URL: "mysql+pymysql://microblog:microblog@{{ groups['database'][0] }}:3306/microblog"
+
+- name: Copy statsD config
+  copy:
+    src: files/statsd.conf
+    dest: statsd.conf
+
+- name: Start the app container
+  command: docker run -dP --net=host -v ${PWD}/statsd.conf:/statsd/statsd.conf prom/statsd-exporter "--statsd.mapping-config=/statsd/statsd.conf"
