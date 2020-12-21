@@ -65,6 +65,9 @@ jobs:
             - m2-{{ checksum "requirements/dev.txt" }}
             - m2- # used if checksum fails
       - run:
+          name: Add public ssh key
+          command: echo "$SSH_PUB_KEY" > ~/.ssh/id_rsa.pub
+      - run:
           name: Install deploy dependencies
           command: |
             python3 -m venv venv
