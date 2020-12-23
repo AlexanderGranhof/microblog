@@ -214,3 +214,7 @@ install-deploy:
 	${pip} install -r requirements/deploy.txt
 	@${pip} install ansible[azure]
 
+# target: Bandit test
+.PHONY: bandit
+bandit:
+	@bandit -r app
