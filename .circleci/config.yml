@@ -67,6 +67,10 @@ jobs:
           name: Create Docker Image
           command: |
             docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile.prod .
+
+      - snyk/scan:
+        docker-image-name: $IMAGE_NAME
+        
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
@@ -101,8 +105,6 @@ workflows:
   deploy:
     jobs:
       - test_app
-      - snyk/scan:
-          docker-image-name: $DOCKERHUB_USERNAME/microblog
       - deploy_to_docker_hub:
           requires:
             - test_app
