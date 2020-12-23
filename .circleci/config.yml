@@ -70,6 +70,7 @@ jobs:
 
       - snyk/scan:
           docker-image-name: $DOCKERHUB_USERNAME/microblog
+          additional-arguments: "--policy-path=.snyk"
 
       - run:
           name: Publish Docker Image to Docker Hub
