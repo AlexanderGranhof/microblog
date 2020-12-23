@@ -1,4 +1,6 @@
 http {
+   server_tokens off;
+
    upstream app-hosts {
       {{ lb_method }};
       server {{ groups['appServer'][0] }}:5000;
