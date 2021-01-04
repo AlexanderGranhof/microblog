@@ -55,6 +55,7 @@
 
 - name: Kill any running exporter
   shell: docker kill exporter
+  ignore_errors: yes
 
 - name: Start nginx exporter
   command: |
