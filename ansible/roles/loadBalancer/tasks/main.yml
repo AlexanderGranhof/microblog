@@ -53,11 +53,15 @@
     state: "{{ nginx_service_state }}"
     enabled: "{{ nginx_service_enabled }}"
 
+- name: Kill any running exporter
+  shell: docker kill exporter
+
 - name: Start nginx exporter
   command: |
     docker run \
       -d \
       --restart always \
+      --name exporter \
       -p 9113:9113 \
       nginx/nginx-prometheus-exporter:0.4.2 \
       -nginx.scrape-uri=http://algn18.me/metrics \
