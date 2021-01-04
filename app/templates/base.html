@@ -1,9 +1,13 @@
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
-    {% if title %}{{ title }} - Microblog{% else %}Welcome to Microblog{% endif %}
+{% if title %}{{ title }} - Microblog{% else %}Welcome to Microblog{% endif %}
 {% endblock %}
 
+{% block head %}
+{{ super() }}
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src *.cloudflare.com; style-src *.cloudflare.com; font-src *.cloudflare.com">
+{% endblock %}
 
 
 {% block navbar %}
