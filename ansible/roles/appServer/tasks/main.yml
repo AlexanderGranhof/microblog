@@ -1,4 +1,7 @@
 ---
+- name: Pull latest image
+  shell: docker pull granhof/microblog:latest
+
 - name: Start the app container
   docker_container:
     name: app
