@@ -1,0 +1,16 @@
+---
+    packages:
+        - fail2ban
+        - tmux
+        - git
+        - unattended-upgrades
+    
+    root_password: $6$eqiqI7Q8abSBLly$Wp8Mw9G3mhaE7vm0EV1AeWP9mT//PTCusb1dZoXiKQ8vXiEAOhM07gakH.iAK9LOG4p08rmwAEotoZEVaDzbf.
+    
+    server_user: azureuser
+    server_user_password: $6$eqiqI7Q8abSBLly$Wp8Mw9G3mhaE7vm0EV1AeWP9mT//PTCusb1dZoXiKQ8vXiEAOhM07gakH.iAK9LOG4p08rmwAEotoZEVaDzbf.
+    server_user_groups:
+        - sudo
+    
+    pub_ssh_key_location:
+        - ~/.ssh/id_rsa.pub
